@@ -1,0 +1,16 @@
+PODS:
+  - DBLineChart (0.0.1)
+
+DEPENDENCIES:
+  - DBLineChart (from `./`)
+
+EXTERNAL SOURCES:
+  DBLineChart:
+    :path: ./
+
+SPEC CHECKSUMS:
+  DBLineChart: 1d38c9b169acd72ac5635404c7c5b2a08935f949
+
+PODFILE CHECKSUM: 866627a8a855d3fdffdd510f57edd8229a3541a8
+
+COCOAPODS: 1.5.3
