@@ -1,5 +1,9 @@
 PODS:
-  - DBLineChart (0.0.1)
+  - DBLineChart (0.0.1):
+    - DBLineChart/LineChart (= 0.0.1)
+  - DBLineChart/LineChart (0.0.1):
+    - DBLineChart/Utility
+  - DBLineChart/Utility (0.0.1)
 
 DEPENDENCIES:
   - DBLineChart (from `./`)
@@ -9,8 +13,8 @@ EXTERNAL SOURCES:
     :path: ./
 
 SPEC CHECKSUMS:
-  DBLineChart: 1d38c9b169acd72ac5635404c7c5b2a08935f949
+  DBLineChart: f66ec4d08c8ae8056b4a62fa4a719a9d36fe57c1
 
-PODFILE CHECKSUM: 866627a8a855d3fdffdd510f57edd8229a3541a8
+PODFILE CHECKSUM: 37bd37c9428d01b1c0fa7ad334fbeea42c012a02
 
 COCOAPODS: 1.5.3

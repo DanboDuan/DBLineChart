@@ -25,9 +25,19 @@ TODO: Add long description of the pod here.
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'bob' => 'bob170131@gmail.com' }
   s.source           = { :git => 'https://github.com/DanboDuan/DBLineChart.git', :tag => s.version.to_s }
-  s.ios.deployment_target = '8.0'
-  s.source_files = 'DBLineChart/**/*.{h,m}'
-  s.public_header_files = 'DBLineChart/*.h'
-  s.frameworks = 'Foundation','UIKit'
+  s.ios.deployment_target = '9.0'
+  s.public_header_files = 'DBLineChart/LineChart/Header/*.h'
+  s.default_subspec = 'LineChart'
+  s.requires_arc = true
+  s.frameworks = 'Foundation', 'CoreFoundation', 'CoreText', 'CoreGraphics', 'UIKit'
+
+  s.subspec 'Utility' do |utility|
+      utility.source_files = 'DBLineChart/Utility/**/*.{h,m,c}'
+  end
+
+  s.subspec 'LineChart' do |lineChart|
+      lineChart.source_files = 'DBLineChart/LineChart/**/*.{h,m,c}'
+      lineChart.dependency 'DBLineChart/Utility'
+  end
 
 end
