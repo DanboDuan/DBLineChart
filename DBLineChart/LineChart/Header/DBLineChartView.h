@@ -172,6 +172,7 @@ NS_ASSUME_NONNULL_BEGIN
  @warning Only the designated initializer should be used to create an instance of `DBLineChartView`.
  */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+
 /**
  @warning Only the designated initializer should be used to create an instance of `DBLineChartView`.
  */
