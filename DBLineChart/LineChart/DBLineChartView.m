@@ -153,13 +153,15 @@
         }
         CGContextStrokePath(context);
 
-        CGFloat pointRadius = plot.pointRadius;
-        [plot.pointColor set];
-        for (NSUInteger index = 0; index< plotIndex; index++) {
-            CGPoint point = xyPoint[index];
-            CGContextFillEllipseInRect(context, CGRectMake(point.x - pointRadius/2, point.y - pointRadius/2, pointRadius, pointRadius));
+        if (plot.showCirclePoint) {
+            CGFloat pointRadius = plot.pointRadius;
+            [plot.pointColor set];
+            for (NSUInteger index = 0; index< plotIndex; index++) {
+                CGPoint point = xyPoint[index];
+                CGContextFillEllipseInRect(context, CGRectMake(point.x - pointRadius/2, point.y - pointRadius/2, pointRadius, pointRadius));
+            }
+            CGContextStrokePath(context);
         }
-        CGContextStrokePath(context);
 
         if(plot.showPointLabel) {
             CGFloat pointFontSize = plot.pointLabelFont.pointSize;

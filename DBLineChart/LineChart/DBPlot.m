@@ -23,6 +23,7 @@
         self.pointColor = [UIColor blackColor];
         self.lineColor = [UIColor blackColor];
         self.lineWidth = 1.0f;
+        self.showCirclePoint = YES;
     }
     return self;
 }

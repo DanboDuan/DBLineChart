@@ -42,7 +42,12 @@ Enable or disable point labels. Default is `NO`.
 @property (nonatomic, strong) UIFont *pointLabelFont;
 
 /**
- The plot point radius. Default and min is `6.0`.
+  If need show the plot point as circle . Default is `YES`.
+ */
+@property (nonatomic, assign) BOOL showCirclePoint;
+
+/**
+ The plot point circle radius. Default and min is `6.0`.
  */
 @property (nonatomic, assign) CGFloat pointRadius;
 

@@ -46,7 +46,7 @@
     plot3.plotTitle = @"testttt";
     plot3.plotValues = plottingDataValues3;
     plot3.lineColor = [UIColor greenColor];
-
+    plot3.showCirclePoint = NO;
 
     [lineChart addPlot:plot1];
     [lineChart addPlot:plot2];
