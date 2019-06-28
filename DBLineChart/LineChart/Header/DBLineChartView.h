@@ -9,6 +9,11 @@
 
 @class DBPlot;
 
+typedef NS_ENUM(NSInteger, DBLineChartLengendViewStyle) {
+    DBLengendViewStyleCirclePointWithLine,
+    DBLengendViewStyleSquareWithoutLine,
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DBLineChartView : UIView
@@ -50,12 +55,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  The legend font color. Default is `[UIColor blackColor]`.
  */
-@property (nonatomic, strong) UIColor*  legendFontColor;
+@property (nonatomic, strong) UIColor *legendFontColor;
 
 /**
  The legend font. Default is `[UIFont systemFontOfSize:12.0]`.
  */
-@property (nonatomic, strong) UIFont*  legendFont;
+@property (nonatomic, strong) UIFont *legendFont;
+
+/**
+ The legend view style. Default is `DBLengendViewStyleCirclePointWithLine`
+ */
+@property (nonatomic, assign) DBLineChartLengendViewStyle legendStyle;
 
 #pragma mark - xAxis
 
@@ -107,6 +117,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) UIColor*  yAxisLabelColor;
 
+/**
+ The line chart y Axis value default is what you set, but you can cast it to int. Default is `NO`
+ */
+@property (nonatomic, assign) BOOL  yAxisValuesCastToInt;
 
 #pragma mark - Grid Line
 

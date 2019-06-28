@@ -8,6 +8,7 @@
 #import "DBLineChartView.h"
 #import "NSString+CoreText.h"
 #import "DBPlot+Calculate.h"
+#import "DBLengendViewBuilder.h"
 
 @interface DBLineChartView ()
 
@@ -37,7 +38,8 @@
 
     self.legendFont = [UIFont systemFontOfSize:12.0];
     self.legendFontColor = [UIColor blackColor];
-
+    self.legendStyle = DBLengendViewStyleCirclePointWithLine;
+    
     self.xAxisLabelFont = [UIFont systemFontOfSize:12.0];
     self.xAxisLabelColor = [UIColor blackColor];
 
@@ -46,6 +48,7 @@
     self.yAxisLabelFormat = @"%.1f";
     self.yMin = 0.0f;
     self.yMax = 0.0f;
+    self.yAxisValuesCastToInt = NO;
 
     self.showXGridLine = YES;
     self.showYGridLine = YES;
@@ -101,8 +104,6 @@
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
 
-    if (!self.internalPlots.count) return;
-
     CGFloat height = self.bounds.size.height;
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSaveGState(context);
@@ -110,8 +111,10 @@
     CGContextConcatCTM(context, flip);
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 
-    [self drawAxisWithContext:context];
-    [self drawPlotWithContext:context];
+    if (self.internalPlots.count) {
+        [self drawAxisWithContext:context];
+        [self drawPlotWithContext:context];
+    }
 
     CGContextRestoreGState(context);
 }
@@ -282,22 +285,36 @@
 
     // draw x label
     NSUInteger xAxisIndex = 0;
-    NSCAssert(self.xAxisLabels.count > 1, @"xAxisLabels should be at least two");
+    NSUInteger xAxisLabelCount = 0;
+    for (NSString *label in self.xAxisLabels) {
+        if (label.length > 0) {
+            xAxisLabelCount++;
+        }
+    }
+    NSCAssert(xAxisLabelCount > 1, @"xAxisLabels should be at least two not empty");
     CGFloat xAxisLabelStep = axisXLength/(self.xAxisLabels.count - 1);
+    CGFloat widthConstraint = axisXLength/(xAxisLabelCount -1);
     [self.xAxisLabelColor set];
     for (NSString *xAxisLabel in self.xAxisLabels) {
-        CGFloat xValuePosition = axisXZero + xAxisLabelStep * xAxisIndex;
-        CFAttributedStringRef xValueString = [xAxisLabel createCFStringWithFont:self.xAxisLabelFont color:self.xAxisLabelColor];
-        CGMutablePathRef xValuePath = CGPathCreateMutable();
-        CGPathAddRect(xValuePath, NULL, CGRectMake(xValuePosition, 0, xAxisLabelStep, axisYZero * 0.8));
-        CTFramesetterRef xValueFramesetter = CTFramesetterCreateWithAttributedString(xValueString);
-        CTFrameRef xValueFrame = CTFramesetterCreateFrame(xValueFramesetter, CFRangeMake(0, CFAttributedStringGetLength(xValueString)), xValuePath, NULL);
-        CTFrameDraw(xValueFrame, context);
-        CFRelease(xValueFrame);
-        CFRelease(xValueFramesetter);
-        CFRelease(xValuePath);
-        CFRelease(xValueString);
+        if (xAxisLabel.length > 0) {
+            CFAttributedStringRef xValueString = [xAxisLabel createCFStringWithFont:self.xAxisLabelFont color:self.xAxisLabelColor];
+            CTFramesetterRef xValueFramesetter = CTFramesetterCreateWithAttributedString(xValueString);
+            CGSize xAxisLabelSize = CTFramesetterSuggestFrameSizeWithConstraints(xValueFramesetter,
+                                                                                 CFRangeMake(0,CFAttributedStringGetLength(xValueString)),
+                                                                                 NULL,
+                                                                                 CGSizeMake(widthConstraint, CGFLOAT_MAX),
+                                                                                 NULL);
+            CGFloat xValuePosition = axisXZero + xAxisLabelStep * xAxisIndex - xAxisLabelSize.width/2;
+            CGMutablePathRef xValuePath = CGPathCreateMutable();
+            CGPathAddRect(xValuePath, NULL, CGRectMake(xValuePosition, 0, xAxisLabelSize.width, axisYZero * 0.8));
 
+            CTFrameRef xValueFrame = CTFramesetterCreateFrame(xValueFramesetter, CFRangeMake(0, CFAttributedStringGetLength(xValueString)), xValuePath, NULL);
+            CTFrameDraw(xValueFrame, context);
+            CFRelease(xValueFrame);
+            CFRelease(xValueFramesetter);
+            CFRelease(xValuePath);
+            CFRelease(xValueString);
+        }
         xAxisIndex++;
     }
 }
@@ -325,13 +342,17 @@
     CFRelease(frameYAxisLabel);
     CFRelease(attrYAxisLabel);
     // multi 2 to make enough width
-    self.axisMarginLeft = ceil(MAX(self.axisMarginLeft, yAxisLabelSize.width) * 2);
+    self.axisMarginLeft = ceil(MAX(self.axisMarginLeft, yAxisLabelSize.width * 2));
 
     // set default y Axis Labels
     if (!self.yAxisValues.count) {
         NSMutableArray<NSNumber *>* yAxisValues = [NSMutableArray array];
         CGFloat startY = self.yMin;
         CGFloat stepY = (self.yMax - self.yMin)/self.yGridLineCount;
+        if (self.yAxisValuesCastToInt) {
+            startY = floor(startY);
+            stepY = ceil(stepY);
+        }
         do {
             [yAxisValues addObject:@(startY)];
             startY += stepY;
@@ -354,14 +375,20 @@
     }
 
     // x Axis Label size
-    NSEnumerator<NSString *> *enumerator = self.xAxisLabels.reverseObjectEnumerator;
-    NSString *xAxisLabel = enumerator.nextObject;
-    while (xAxisLabel.length < 1) {
-        xAxisLabel = enumerator.nextObject;
+    // might be empty for some x label
+    NSString *xAxisLabel = nil;
+    NSUInteger xAxisLabelCount = 0;
+    for (NSString *label in self.xAxisLabels) {
+        if (label.length > 0) {
+            xAxisLabelCount++;
+        }
+        if (label.length > xAxisLabel.length) {
+            xAxisLabel = label;
+        }
     }
     CFAttributedStringRef attrXAxisLabel = [xAxisLabel createCFStringWithFont:self.xAxisLabelFont color:self.xAxisLabelColor];
     CTFramesetterRef frameXAxisLabel = CTFramesetterCreateWithAttributedString(attrXAxisLabel);
-    CGFloat widthConstraint = (self.bounds.size.width - self.axisMarginRight - self.axisMarginLeft)/self.xAxisLabels.count;
+    CGFloat widthConstraint = (self.bounds.size.width - self.axisMarginRight - self.axisMarginLeft)/xAxisLabelCount;
     CGSize xAxisLabelSize = CTFramesetterSuggestFrameSizeWithConstraints(frameXAxisLabel,
                                                                          CFRangeMake(0,CFAttributedStringGetLength(attrXAxisLabel)),
                                                                          NULL,
@@ -370,7 +397,7 @@
     CFRelease(frameXAxisLabel);
     CFRelease(attrXAxisLabel);
     // multi 2 to make enough width
-    self.axisMarginBottom = ceil(MAX(self.axisMarginBottom, xAxisLabelSize.height) * 2);
+    self.axisMarginBottom = ceil(MAX(self.axisMarginBottom, xAxisLabelSize.height * 2));
 
     // set default x Grid Line Count value
     if (self.xGridLineCount == 1) {
@@ -379,70 +406,14 @@
 }
 
 - (UIView *)legendViewWithRowCount:(NSUInteger)row {
-    CGFloat widthUnit = 50;
-    CGFloat heightUnit = 30;
+    DBLengendViewBuilder *builder = [DBLengendViewBuilder new];
+    builder.row = row;
+    builder.legendFontColor = self.legendFontColor;
+    builder.legendFont = self.legendFont;
+    builder.style = self.legendStyle;
+    builder.plots = self.internalPlots;
 
-    NSUInteger plotCount = self.internalPlots.count;
-    NSUInteger index = 0;
-    NSUInteger lineCount = ceil(1.0 * plotCount/row);
-
-    CTLineRef *textLines = malloc(sizeof(CTLineRef) * plotCount);
-    CGFloat maxTextWidth = 0;
-    for (DBPlot *plot in self.internalPlots) {
-        CFAttributedStringRef plotTitleString = [plot.plotTitle createCFStringWithFont:self.legendFont color:self.legendFontColor];
-        CTFramesetterRef frameLabel = CTFramesetterCreateWithAttributedString(plotTitleString);
-        CGSize textLabelSize = CTFramesetterSuggestFrameSizeWithConstraints(frameLabel,
-                                                                             CFRangeMake(0,CFAttributedStringGetLength(plotTitleString)),
-                                                                             NULL,
-                                                                             CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX),
-                                                                             NULL);
-        maxTextWidth = MAX(textLabelSize.width, maxTextWidth);
-        CTLineRef line = CTLineCreateWithAttributedString(plotTitleString);
-        textLines[index] = line;
-        CFRelease(frameLabel);
-        CFRelease(plotTitleString);
-        index++;
-    }
-    // keep gap
-    maxTextWidth += 10;
-
-    CGSize aSize = CGSizeMake((widthUnit + maxTextWidth) * row, lineCount * heightUnit);
-    UIGraphicsBeginImageContextWithOptions(aSize, NO, 0.0);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGAffineTransform flip = CGAffineTransformMake(1.0, 0.0, 0.0, -1.0, 0.0, aSize.height);
-    CGContextConcatCTM(context, flip);
-    CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-
-    for (index = 0; index< plotCount; index++) {
-        DBPlot *plot = self.internalPlots[index];
-        CGFloat plotX = (widthUnit + maxTextWidth) * (index % row);
-        CGFloat plotY = heightUnit * (lineCount - 1 - floor(1.0 * index/row));
-
-        [plot.lineColor set];
-        CGContextSetLineWidth(context, plot.lineWidth);
-        CGContextMoveToPoint(context, plotX + 2, plotY + heightUnit/2);
-        CGContextAddLineToPoint(context, plotX + widthUnit - 4, plotY + heightUnit/2);
-        CGContextStrokePath(context);
-
-        CTLineRef line = textLines[index];
-        CGContextSetTextPosition(context, plotX + widthUnit + 2, plotY + heightUnit/2 - self.legendFont.pointSize/4);
-        CTLineDraw(line, context);
-        CFRelease(line);
-
-        CGFloat pointRadius = plot.pointRadius;
-        [plot.pointColor set];
-        CGContextFillEllipseInRect(context, CGRectMake(plotX + widthUnit/2 - pointRadius/2, plotY + heightUnit/2 - pointRadius/2, pointRadius, pointRadius));
-        CGContextStrokePath(context);
-    }
-
-    free(textLines);
-    UIImage *squareImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-
-    UIImageView *squareImageView = [[UIImageView alloc] initWithImage:squareImage];
-    [squareImageView setFrame:CGRectMake(0, 0, aSize.width, aSize.height)];
-
-    return squareImageView;
+    return [builder buildLengendView];
 }
 
 @end

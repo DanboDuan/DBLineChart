@@ -54,6 +54,7 @@
     [lineChart setXAxisLabels:@[@"1d",@"2d",@"",@"4d",@"",@"",@"7d",@"",@"",@"",@"11D"]];
     [lineChart setXAxisLabels:@[@"0D",@"2d",@"4D",@"6d",@"8D",@"10D"]];
     lineChart.xGridLineCount = 5;
+    lineChart.yAxisValuesCastToInt = YES;
     [lineChart drawLineChart];
 
     UIView *legend = [lineChart legendViewWithRowCount:2];

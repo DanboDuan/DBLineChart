@@ -1,5 +1,22 @@
 # Upcoming
 
+# 0.0.3
+
+*Released: 06/28/2019*
+
+**Features:**
+
+1. 优化 LengendView
+
+**Changed:**
+
+**Fixes:**
+
+**Refactored:**
+
+**Deprecated:**
+
+**Removed:**
 
 # 0.0.1
 
