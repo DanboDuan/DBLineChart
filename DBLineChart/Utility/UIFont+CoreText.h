@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (CTFontRef)createCTFont;
 
-+ (CTFontRef)bundledFontNamed:(NSString *)name size:(CGFloat)size;
++ (CTFontRef)createFontFromBundledNamed:(NSString *)name size:(CGFloat)size;
 
 @end
 

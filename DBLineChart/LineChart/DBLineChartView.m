@@ -406,6 +406,7 @@
 }
 
 - (UIView *)legendViewWithRowCount:(NSUInteger)row {
+    NSCAssert(row > 0, @"must > 0");
     DBLegendViewBuilder *builder = [DBLegendViewBuilder new];
     builder.row = row;
     builder.legendFontColor = self.legendFontColor;

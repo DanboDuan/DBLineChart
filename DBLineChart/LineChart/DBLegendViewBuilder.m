@@ -51,6 +51,7 @@
     NSUInteger plotCount = self.plots.count;
     NSUInteger index = 0;
     NSUInteger lineCount = self.row;
+    NSCAssert(lineCount > 0, @"");
     NSUInteger columnCount = ceil(1.0 * plotCount/lineCount);
     CTLineRef *textLines = malloc(sizeof(CTLineRef) * plotCount);
     CGFloat maxTextWidth = 0;

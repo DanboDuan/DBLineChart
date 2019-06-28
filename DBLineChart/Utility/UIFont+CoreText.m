@@ -14,7 +14,7 @@
     return font;
 }
 
-+ (CTFontRef)bundledFontNamed:(NSString *)name size:(CGFloat)size {
++ (CTFontRef)createFontFromBundledNamed:(NSString *)name size:(CGFloat)size {
     // Adapted from http://stackoverflow.com/questions/2703085/how-can-you-load-a-font-ttf-from-a-file-using-core-text
     NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"ttf"];
     CFURLRef url = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, (CFStringRef)path, kCFURLPOSIXPathStyle, false);
