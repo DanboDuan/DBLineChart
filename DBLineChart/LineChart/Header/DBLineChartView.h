@@ -9,9 +9,9 @@
 
 @class DBPlot;
 
-typedef NS_ENUM(NSInteger, DBLineChartLengendViewStyle) {
-    DBLengendViewStyleCirclePointWithLine,
-    DBLengendViewStyleSquareWithoutLine,
+typedef NS_ENUM(NSInteger, DBLineChartLegendViewStyle) {
+    DBLegendViewStyleCirclePointWithLine,
+    DBLegendViewStyleSquareWithoutLine,
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -63,9 +63,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIFont *legendFont;
 
 /**
- The legend view style. Default is `DBLengendViewStyleCirclePointWithLine`
+ The legend view style. Default is `DBLegendViewStyleCirclePointWithLine`
  */
-@property (nonatomic, assign) DBLineChartLengendViewStyle legendStyle;
+@property (nonatomic, assign) DBLineChartLegendViewStyle legendStyle;
 
 #pragma mark - xAxis
 

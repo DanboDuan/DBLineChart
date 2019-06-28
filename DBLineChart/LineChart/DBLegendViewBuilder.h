@@ -1,5 +1,5 @@
 //
-//  DBLengendViewBuilder.h
+//  DBLegendViewBuilder.h
 //  DBLineChart
 //
 //  Created by bob on 2019/6/28.
@@ -12,10 +12,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DBLengendViewBuilder : NSObject
+@interface DBLegendViewBuilder : NSObject
 
 @property (nonatomic, strong) NSArray<DBPlot *> *plots;
-@property (nonatomic, assign) DBLineChartLengendViewStyle style;
+@property (nonatomic, assign) DBLineChartLegendViewStyle style;
 @property (nonatomic, assign) NSUInteger row;
 @property (nonatomic, strong) UIFont *legendFont;
 @property (nonatomic, strong) UIColor *legendFontColor;
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat circleUnitWidth;// default 50
 @property (nonatomic, assign) CGFloat squareWidth;// default 10
 
-- (UIView *)buildLengendView;
+- (UIView *)buildLegendView;
 
 @end
 

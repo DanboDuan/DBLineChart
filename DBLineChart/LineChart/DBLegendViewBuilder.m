@@ -1,15 +1,15 @@
 //
-//  DBLengendViewBuilder.m
+//  DBLegendViewBuilder.m
 //  DBLineChart
 //
 //  Created by bob on 2019/6/28.
 //
 
-#import "DBLengendViewBuilder.h"
+#import "DBLegendViewBuilder.h"
 #import "NSString+CoreText.h"
 #import "DBPlot.h"
 
-@implementation DBLengendViewBuilder
+@implementation DBLegendViewBuilder
 
 - (instancetype)init {
     self = [super init];
@@ -24,7 +24,7 @@
     return self;
 }
 
-- (CTLineRef)lineWithTitle:(NSString *)title size:(CGSize *)size {
+- (CTLineRef)createLineWithTitle:(NSString *)title size:(CGSize *)size {
     CFAttributedStringRef plotTitleString = [title createCFStringWithFont:self.legendFont color:self.legendFontColor];
     CTFramesetterRef frameLabel = CTFramesetterCreateWithAttributedString(plotTitleString);
     CGSize textLabelSize = CTFramesetterSuggestFrameSizeWithConstraints(frameLabel,
@@ -44,8 +44,8 @@
 
 #pragma mark - view
 
-- (UIView *)buildLengendView  {
-    CGFloat widthUnit = self.style == DBLengendViewStyleCirclePointWithLine ? self.circleUnitWidth : self.squareWidth ;
+- (UIView *)buildLegendView  {
+    CGFloat widthUnit = self.style == DBLegendViewStyleCirclePointWithLine ? self.circleUnitWidth : self.squareWidth ;
     CGFloat heightUnit = self.plotHeight;
 
     NSUInteger plotCount = self.plots.count;
@@ -58,7 +58,7 @@
 
     CGSize textLabelSize = CGSizeZero;
     for (DBPlot *plot in self.plots) {
-        textLines[index++] = [self lineWithTitle:plot.plotTitle size:&textLabelSize];
+        textLines[index++] = [self createLineWithTitle:plot.plotTitle size:&textLabelSize];
         maxTextWidth = MAX(textLabelSize.width, maxTextWidth);
         maxTextHeight = MAX(textLabelSize.height, maxTextHeight);
     }
@@ -82,7 +82,7 @@
         CGFloat plotX = columnWidth * (index % columnCount);
         CGFloat plotY = heightUnit * (lineCount - 1 - floor(1.0 * index/columnCount));
 
-        if (self.style == DBLengendViewStyleCirclePointWithLine) {
+        if (self.style == DBLegendViewStyleCirclePointWithLine) {
             [plot.lineColor set];
             CGContextSetLineWidth(context, plot.lineWidth);
             CGContextMoveToPoint(context, plotX, plotY + heightUnit/2);
@@ -93,7 +93,7 @@
             [plot.pointColor set];
             CGContextFillEllipseInRect(context, CGRectMake(plotX + widthUnit/2 - pointRadius/2, plotY + heightUnit/2 - pointRadius/2, pointRadius, pointRadius));
             CGContextStrokePath(context);
-        } else  if (self.style == DBLengendViewStyleSquareWithoutLine) {
+        } else  if (self.style == DBLegendViewStyleSquareWithoutLine) {
             [plot.lineColor set];
             CGContextFillRect(context, CGRectMake(plotX, plotY + squareTop, widthUnit, widthUnit));
         }

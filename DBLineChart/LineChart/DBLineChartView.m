@@ -8,7 +8,7 @@
 #import "DBLineChartView.h"
 #import "NSString+CoreText.h"
 #import "DBPlot+Calculate.h"
-#import "DBLengendViewBuilder.h"
+#import "DBLegendViewBuilder.h"
 
 @interface DBLineChartView ()
 
@@ -38,7 +38,7 @@
 
     self.legendFont = [UIFont systemFontOfSize:12.0];
     self.legendFontColor = [UIColor blackColor];
-    self.legendStyle = DBLengendViewStyleCirclePointWithLine;
+    self.legendStyle = DBLegendViewStyleCirclePointWithLine;
     
     self.xAxisLabelFont = [UIFont systemFontOfSize:12.0];
     self.xAxisLabelColor = [UIColor blackColor];
@@ -406,14 +406,14 @@
 }
 
 - (UIView *)legendViewWithRowCount:(NSUInteger)row {
-    DBLengendViewBuilder *builder = [DBLengendViewBuilder new];
+    DBLegendViewBuilder *builder = [DBLegendViewBuilder new];
     builder.row = row;
     builder.legendFontColor = self.legendFontColor;
     builder.legendFont = self.legendFont;
     builder.style = self.legendStyle;
     builder.plots = self.internalPlots;
 
-    return [builder buildLengendView];
+    return [builder buildLegendView];
 }
 
 @end
